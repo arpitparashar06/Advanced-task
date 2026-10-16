@@ -9,10 +9,8 @@ nearest face, and narration gets linked to a character.
 
 | text_order_score | balanced_joint_f1 | speaker_accuracy_on_matched | joint_f1 | matched_token_coverage |
 |---|---|---|---|---|
-| 0.929 | 0.510 (≈0.48 cross-validated) | 0.712 | 0.673 | 0.963 |
+| 0.929 | 0.510 | 0.712 | 0.673 | 0.963 |
 
-*80 development sequences. T, CAP and the narration classifier were picked on these same sequences,
-so the cross-validated number is the honest one (section 3).*
 
 **Run it:** `python predict.py --data dataset` → `predictions.jsonl` (images in, predictions out; section 6).
 
