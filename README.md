@@ -9,8 +9,10 @@ nearest face, and narration gets linked to a character.
 
 | text_order_score | balanced_joint_f1 | speaker_accuracy_on_matched | joint_f1 | matched_token_coverage |
 |---|---|---|---|---|
-| 0.929 | 0.510 | 0.712 | 0.673 | 0.963 |
+| 0.929 | 0.510 (≈0.48 cross-validated) | 0.712 | 0.673 | 0.963 |
 
+*80 development sequences. T, CAP and the narration classifier were picked on these same sequences,
+so the cross-validated number is the honest one (section 3).*
 
 **Run it:** `python predict.py --data dataset` → `predictions.jsonl` (images in, predictions out; section 6).
 
@@ -18,17 +20,17 @@ nearest face, and narration gets linked to a character.
 
 ## 1. Final pipeline
 
-Everything below runs in one go in `predict.py`, straight from the page images.
+Everything below runs in one go in `predict.py` (or `notebooks/11_predict.ipynb`), straight from the page images.
 
-| Step | What it does | Code | Tuned / trained on data? |
+| Step | What it does | Built in | Tuned / trained on data? |
 |---|---|---|---|
-| 1 | Magiv2, as it comes: finds text, reads it, puts it in reading order, drops sound effects, links each text to a character box, groups the characters on each page, finds speech-bubble tails | Magiv2 | no |
-| 2 | Fingerprints: Magiv2's own character embedder turns every character crop into 768 numbers | `predict.py` | no |
-| 3 | Is every text inside a bubble / box, or floating in the air? (OpenCV, no training) | `bubbles.py` | no |
-| 4 | Narration probability of every line: a logistic regression on simple clues | `narration.py` | yes: trained on the dev labels |
-| 5 | Confirmed-speaker rule: text inside a bubble, cloud or box keeps Magiv2's link; text in the air gets the last confirmed speaker | `bubbles.py` | no |
-| 6 | Join Magiv2's per-page groups into characters (also across pages) while their average fingerprints are more alike than T; lines linked to nobody get the previous speaker; keep the CAP most talkative speakers | `grouping.py` | yes: T = 0.75, CAP = 3 |
-| 7 | If the sequence seems to have a narrator, lines that look like narration become NARRATION | `narration.py` | yes: G, K, P picked on dev |
+| 1 | Magiv2, as it comes: finds text, reads it, puts it in reading order, drops sound effects, links each text to a character box, groups the characters on each page, finds speech-bubble tails | notebook 1 | no |
+| 2 | Fingerprints: Magiv2's own character embedder turns every character crop into 768 numbers | notebook 8 | no |
+| 3 | Is every text inside a bubble / box, or floating in the air? (OpenCV, no training) | notebook 9 | no |
+| 4 | Narration probability of every line: a logistic regression on simple clues | notebook 10 | yes: trained on the dev labels |
+| 5 | Confirmed-speaker rule: text inside a bubble, cloud or box keeps Magiv2's link; text in the air gets the last confirmed speaker | notebook 9 | no |
+| 6 | Join Magiv2's per-page groups into characters (also across pages) while their average fingerprints are more alike than T; lines linked to nobody get the previous speaker; keep the CAP most talkative speakers | notebook 8 | yes: T = 0.75, CAP = 3 |
+| 7 | If the sequence seems to have a narrator, lines that look like narration become NARRATION | notebook 10 | yes: G, K, P picked on dev |
 
 The learned / tuned parts are saved in `grouping_settings.json` and `narration_model.json`.
 
@@ -242,7 +244,8 @@ python predict.py --data dataset --split development      # -> dev_predictions.j
 python dataset/score.py --references dataset/development/labels.jsonl --predictions dev_predictions.jsonl --output dev_scores.json
 python predict.py --pages page1.png page2.png page3.png   # -> one JSON for any 3 pages
 ```
-On Kaggle: `notebooks/11_predict.ipynb` (GPU T4, internet on, task data as input).
+On Kaggle: `notebooks/11_predict.ipynb` (GPU T4, internet on; inputs: the task data,
+`grouping_settings.json` and `narration_model.json`).
 
 **How each step was built** (Kaggle, GPU T4, internet on, task data as input):
 1. `notebooks/1_magi_baseline.ipynb` → `magi_output.json` and Magiv2's score.
@@ -262,9 +265,8 @@ Hardware: Kaggle T4 GPUs for Magiv2, Qwen and DINOv2; everything else on a lapto
 
 | File | What it is |
 |---|---|
-| `predict.py` | The whole system: images in, predictions out |
+| `predict.py`, `notebooks/11_predict.ipynb` | The whole system: images in, predictions out |
 | `predictions.jsonl` | Final test predictions (15 sequences) |
-| `grouping.py`, `bubbles.py`, `narration.py` | The pipeline's parts |
 | `grouping_settings.json`, `narration_model.json` | T and CAP, and the narration classifier (learned on dev) |
 | `notebooks/1_magi_baseline.ipynb` | Magiv2 as it is |
 | `notebooks/5_finetune_qwen.ipynb` | Qwen3-VL zero-shot, face sheet, DINOv2 array, LoRA fine-tune |
@@ -272,9 +274,8 @@ Hardware: Kaggle T4 GPUs for Magiv2, Qwen and DINOv2; everything else on a lapto
 | `notebooks/8_fingerprints.ipynb` | Fingerprints and joining groups |
 | `notebooks/9_confirmed_speakers.ipynb` | What goes wrong, bubble detector, confirmed-speaker rule |
 | `notebooks/10_narration.ipynb` | Narration classifier, final predictions |
-| `notebooks/11_predict.ipynb` | Runs `predict.py` on Kaggle |
 | `notebooks/4_finetune_dino.ipynb` | DINOv2 fine-tune on PopManga crops |
-| `link_speakers.py`, `embed_characters.py` | The same pipeline as scripts, starting from the saved files in `data/` |
+| `link_speakers.py`, `embed_characters.py`, `grouping.py`, `bubbles.py`, `narration.py` | The same pipeline as scripts working from the saved files in `data/`, used by the experiment scripts |
 | `data/` | Magiv2 output and fingerprints (Magiv2, plain and fine-tuned DINOv2) |
 | `qwen_lora_adapter/`, `dino_finetuned/` | Trained weights |
 | `tune_grouping.py`, `repeated_cv.py`, `tail_rule.py`, `narration_clues.py`, `compare_fingerprints.py`, `link_experiments.py`, `rule_experiments.py`, `train_same_person_classifier.py`, `narration_step.py` | Experiments |
