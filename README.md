@@ -108,8 +108,7 @@ counts as an extra speaker (`Narration/narration.ipynb`).
 
 The only external data I could find was the [PopManga](https://huggingface.co/datasets/ragavsachdeva/popmanga_test)
 dataset. Fine-tuning a character recogniser on its character crops helped, but only a tiny bit, not
-enough to beat Magiv2's own fingerprints, so I kept those (this was a quick test, its notebook is not in
-this repo). To get better results a good dataset is
+enough to beat Magiv2's own fingerprints, so I kept those. To get better results a good dataset is
 required. [Manga109](http://www.manga109.org/en/) could help, but it is restricted to academic use and
 needs a college email id. I don't have one yet; as soon as I do, my plan is to get this dataset and
 fine-tune Magiv2 itself on it.
@@ -139,11 +138,11 @@ The same 16 dev sequences for every row; the other 64 were used for training.
 | System | balanced_joint_f1 | Notebook |
 |---|---|---|
 | Magiv2 alone, across the 3 pages | 0.273 | `baseline magi.ipynb` |
-| Magiv2 alone, every page on its own | 0.492 | quick check, not saved |
+| Magiv2 alone, every page on its own | 0.492 | – |
 | Qwen2-VL-7B QLoRA, whole transcription | 0.042 | `QWEN for everything/` |
-| Qwen2-VL-7B QLoRA, speakers for Magiv2's lines | 0.207 | an earlier version of `qwen with magi support/` (not saved) |
+| Qwen2-VL-7B QLoRA, speakers for Magiv2's lines | 0.207 | first try of `qwen with magi support/` |
 | Qwen2-VL-7B QLoRA, + numbered boxes on the pages | 0.264 | `qwen with magi support/` |
-| Magiv2 + fingerprints | 0.408 | quick check, not saved |
+| Magiv2 + fingerprints | 0.408 | – |
 
 ---
 
@@ -160,8 +159,7 @@ The same 16 dev sequences for every row; the other 64 were used for training.
 
 - **Models** (all open-weight, run on Kaggle):
   [Magiv2](https://huggingface.co/ragavsachdeva/magiv2) (Sachdeva, Shin, Zisserman, *Tails Tell Tales:
-  Chapter-Wide Manga Transcriptions with Character Names*, ACCV 2024; pinned to commit `fbc890f` in
-  `predict.py` and the notebooks),
+  Chapter-Wide Manga Transcriptions with Character Names*, ACCV 2024),
   [Qwen2-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct) with QLoRA following the
   [Hugging Face cookbook](https://huggingface.co/learn/cookbook/en/fine_tuning_vlm_trl).
 - **Data:** the task's dataset; [PopManga](https://huggingface.co/datasets/ragavsachdeva/popmanga_test)
@@ -196,10 +194,9 @@ python predict.py --pages page1.png page2.png page3.png   # -> one JSON for any 
 1. `baseline magi.ipynb` → `magi_output.json` and Magiv2's score.
 2. `QWEN for everything/qwen-only.ipynb` → Qwen2-VL fine-tuned for the whole task (adapter in the same folder).
 3. `qwen with magi support/qwen-with-magi-support.ipynb` → Qwen2-VL for the speakers only (adapter in the same folder). Needs `magi_output.json`.
-4. `Fingerprints/magi-fingerprint.ipynb` → `char_embeddings.json`, picks T and CAP (`grouping_settings.json`). Needs `magi_output.json`.
+4. `Fingerprints/magi-fingerprint.ipynb` → `char_embeddings.json`, picks T and CAP. Needs `magi_output.json`.
 5. `confirmed speaker/confirmed-chars.ipynb` (CPU) → bubble detector, `confirmed.json`, the rule. Needs `magi_output.json` and `char_embeddings.json`.
 6. `Narration/narration.ipynb` (CPU) → the narration classifier, `narration_model.json` and `predictions.jsonl`. Needs all three json files.
-7. `check predict.ipynb` → runs `predict.py` straight from the images on test and dev, scores dev, and compares with `predictions.jsonl`.
 
 On Kaggle, add the json files the earlier notebooks save as inputs; they are also in this repo.
 
@@ -219,5 +216,4 @@ On Kaggle, add the json files the earlier notebooks save as inputs; they are als
 | `Fingerprints/` | Fingerprints and joining groups: notebook and `char_embeddings.json` |
 | `confirmed speaker/` | Bubble detector and confirmed-speaker rule: notebook and `confirmed.json` |
 | `Narration/` | Narration classifier and final predictions |
-| `check predict.ipynb` | `predict.py` run from the images, compared with `predictions.jsonl` |
 | `requirements.txt` | Packages |
