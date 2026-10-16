@@ -170,7 +170,7 @@ The same 16 dev sequences for every row; the other 64 were used for training.
   come straight from the code; nothing was edited by hand and no test answers were used.
 - **My part:** the confirmed-speaker rule and the bubble detector, the fingerprint grouping and its tuning,
   the narration classifier, the Qwen fine-tuning runs and the evaluation. Magiv2, Qwen, the cookbook
-  recipe and the scorer are other people's work. I used an AI assistant (Claude) to help write and debug
+  recipe and the scorer are other people's work. I used an LLM at few places to help write and debug
   code.
 
 ---
