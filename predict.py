@@ -39,6 +39,9 @@ CAP = settings["CAP"]
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = None           # Magiv2, loaded at the bottom
+# Magiv2 runs its own code from Hugging Face (trust_remote_code), so pin the exact version:
+# its latest commit (7 Mar 2025), the one all my notebooks downloaded
+MAGI_REVISION = "fbc890fec52977142e8ee00bfe26e9458b65517c"
 
 
 # ======================= 1. Magiv2 =======================
@@ -387,7 +390,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     from transformers import AutoModel
-    model = AutoModel.from_pretrained("ragavsachdeva/magiv2", trust_remote_code=True).to(device).eval()
+    model = AutoModel.from_pretrained("ragavsachdeva/magiv2", revision=MAGI_REVISION, trust_remote_code=True).to(device).eval()
     model.crop_embedding_model.config.mask_ratio = 0.0      # it's a ViT-MAE, by default it hides 75% of the crop
 
     if args.pages is not None:
