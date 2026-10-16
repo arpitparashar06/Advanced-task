@@ -1,0 +1,13 @@
+numpy
+torch
+pillow
+opencv-python          # is the text inside a bubble / box?
+scikit-learn           # narration classifier
+transformers==4.49.0   # Magiv2 needs this exact version
+sentencepiece          # Magiv2's OCR
+einops                 # Magiv2
+shapely                # Magiv2
+timm                   # Magiv2
+scipy                  # Magiv2
+# the two Qwen notebooks install their own packages in their first cell:
+# trl, peft, bitsandbytes, qwen-vl-utils (newer transformers, so run them in a separate environment)

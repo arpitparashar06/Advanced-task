@@ -1,0 +1,5 @@
+# the task data is not mine to publish: put it in ./dataset to run predict.py
+dataset/
+__pycache__/
+.DS_Store
+.ipynb_checkpoints/
