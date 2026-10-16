@@ -10,11 +10,6 @@ nearest face, and narration gets linked to a character.
 |---|---|---|---|---|
 | 0.929 | 0.510 | 0.712 | 0.673 | 0.963 |
 
-*80 development sequences. T, CAP and the narration classifier were picked on these same sequences,
-so the cross-validated number is the honest one (section 3).*
-
-Run it: `notebooks/1_magi_baseline.ipynb` → `notebooks/2_confirmed_speakers.ipynb` → `notebooks/3_fingerprints.ipynb`
-(details in section 6). Test predictions: `predictions.jsonl`.
 
 ---
 
