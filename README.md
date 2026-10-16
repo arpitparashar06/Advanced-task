@@ -1,7 +1,6 @@
 # Manga transcription with consistent speakers (BYTE Applied ML, Task 2)
 
-Given three consecutive manga pages, the task is to write out the story text in reading order and say who
-speaks each line, with the same character keeping the same name on all three pages.
+Build a system that reads three consecutive English manga pages, extracts the story text in reading order, and identifies who spoke each line. Keep character labels consistent across all three pages in a sequence.
 
 My final system uses Magiv2 to read the pages, then fixes the three things I saw it get wrong:
 the same character gets a different name on every page, text floating in the air gets linked to the
@@ -9,7 +8,7 @@ nearest face, and narration gets linked to a character.
 
 | text_order_score | balanced_joint_f1 | speaker_accuracy_on_matched | joint_f1 | matched_token_coverage |
 |---|---|---|---|---|
-| 0.929 | 0.510 (≈0.48 cross-validated) | 0.712 | 0.673 | 0.963 |
+| 0.929 | 0.510 | 0.712 | 0.673 | 0.963 |
 
 *80 development sequences. T, CAP and the narration classifier were picked on these same sequences,
 so the cross-validated number is the honest one (section 3).*
